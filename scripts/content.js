@@ -1,8 +1,20 @@
-// Prevent banner initialization
-document.documentElement.style.setProperty('--sticky-banner-height', '0px', 'important');
-document.documentElement.style.setProperty('--banner-height', '0px', 'important');
+(() => {
+  // Block custom element registration
+  const originalDefine = window.customElements.define;
+  window.customElements.define = function(name, constructor, options) {
+    if (name.toLowerCase().includes('gu-') || name.toLowerCase().includes('island')) {
+      console.debug('Blocked registration of:', name);
+      return;
+    }
+    return originalDefine.call(this, name, constructor, options);
+  };
 
-// Block web component initialization
+  // Set banner heights to 0
+  document.documentElement.style.setProperty('--sticky-banner-height', '0px', 'important');
+  document.documentElement.style.setProperty('--banner-height', '0px', 'important');
+  document.documentElement.style.setProperty('--contributions-banner-height', '0px', 'important');
+})();
+
 const scriptBlocker = new MutationObserver((mutations) => {
   for (const mutation of mutations) {
     for (const node of mutation.addedNodes) {
