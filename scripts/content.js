@@ -7,14 +7,14 @@ const AD_SELECTORS = [
   '.site-message--contributions',
   'gu-island[name="TopBar"]',
   'gu-island[name="ExpandableMarketingCardWrapper"]',
-  'gu-island[name="StickyBottomBanner"]',  // Add sticky banner wrapper
+  'gu-island[name="StickyBottomBanner"]',  // Update sticky banner wrapper
   'gu-island[name="UsEoy2024Wrapper"]',    // Keep fundraising banner wrapper
   '.ad-slot-container',
   '.commercial-unit',
   '.contributions__epic-wrapper',
   '[name="contributions-banner-choice-cards-contribution-frequency"]',  // Update form element names
   '[name="contributions-banner-choice-cards-contribution-amount"]',     // Update form element names
-  'aside > gu-island'  // Catch any other fundraising banners in asides
+  'aside > gu-island[name="StickyBottomBanner"]'  // Target banner specifically in aside
 ];
 
 function removeAds() {
