@@ -21,17 +21,28 @@ function removeAds() {
     const elements = document.querySelectorAll(selector);
     elements.forEach(element => {
       if (element && element.parentNode) {
-        element.remove();
+        // Also remove parent if it's a container
+        if (element.parentNode.tagName.toLowerCase() === 'gu-island') {
+          element.parentNode.remove();
+        } else {
+          element.remove();
+        }
       }
     });
   });
 }
 
+// Initial removal
 removeAds();
 
+// Continuous check every 500ms for dynamically loaded content
+setInterval(removeAds, 500);
+
+// Monitor DOM changes
 const observer = new MutationObserver((mutations) => {
   const shouldRemoveAds = mutations.some(mutation => {
-    return Array.from(mutation.addedNodes).some(node => {
+    // Check added nodes
+    const hasNewAds = Array.from(mutation.addedNodes).some(node => {
       if (node.nodeType === Node.ELEMENT_NODE) {
         return AD_SELECTORS.some(selector =>
           node.matches?.(selector) || node.querySelector?.(selector)
@@ -39,6 +50,15 @@ const observer = new MutationObserver((mutations) => {
       }
       return false;
     });
+
+    // Also check if the mutation target itself matches our selectors
+    if (mutation.target.nodeType === Node.ELEMENT_NODE) {
+      return AD_SELECTORS.some(selector =>
+        mutation.target.matches?.(selector) || mutation.target.querySelector?.(selector)
+      );
+    }
+
+    return hasNewAds;
   });
 
   if (shouldRemoveAds) {
@@ -48,5 +68,7 @@ const observer = new MutationObserver((mutations) => {
 
 observer.observe(document.body, {
   childList: true,
-  subtree: true
+  subtree: true,
+  attributes: true,  // Monitor attribute changes
+  characterData: true  // Monitor text content changes
 });
