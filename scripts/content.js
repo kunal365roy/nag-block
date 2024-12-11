@@ -21,7 +21,11 @@ const AD_SELECTORS = [
   'aside:has(> gu-island[name="StickyBottomBanner"])',
   'aside:has(> gu-island[name*="Banner"])',
   'div:has(> [name*="contribution"])',
-  'div:has(> [data-contribution-type])'
+  'div:has(> [data-contribution-type])',
+  'aside:last-child:has(gu-island)',
+  'aside:last-child > gu-island',
+  'aside:last-child > gu-island[name="StickyBottomBanner"]',
+  'aside > gu-island:only-child'
 ];
 
 const style = document.createElement('style');
@@ -34,12 +38,21 @@ style.textContent = `
     position: fixed !important;
     top: -9999px !important;
     left: -9999px !important;
+    height: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+    clip: rect(0 0 0 0) !important;
+    margin: -1px !important;
+    padding: 0 !important;
+    border: 0 !important;
   }
   aside:has(gu-island[name="StickyBottomBanner"]),
-  aside:has(gu-island[name*="Banner"]) {
+  aside:has(gu-island[name*="Banner"]),
+  aside:last-child:has(gu-island) {
     display: none !important;
     opacity: 0 !important;
     pointer-events: none !important;
+    visibility: hidden !important;
   }
 `;
 document.head.appendChild(style);
@@ -52,10 +65,13 @@ function removeAds() {
         const aside = element.closest('aside');
         if (aside) {
           aside.remove();
+          aside.parentNode?.removeChild(aside);
         } else if (element.parentNode.tagName.toLowerCase() === 'gu-island') {
           element.parentNode.remove();
+          element.parentNode.parentNode?.removeChild(element.parentNode);
         } else {
           element.remove();
+          element.parentNode?.removeChild(element);
         }
       }
     });
@@ -64,7 +80,7 @@ function removeAds() {
 
 removeAds();
 
-setInterval(removeAds, 50);
+setInterval(removeAds, 25);
 
 const observer = new MutationObserver((mutations) => {
   const shouldRemoveAds = mutations.some(mutation => {
@@ -73,7 +89,8 @@ const observer = new MutationObserver((mutations) => {
         return AD_SELECTORS.some(selector =>
           node.matches?.(selector) ||
           node.querySelector?.(selector) ||
-          node.closest?.('aside:has(gu-island[name*="Banner"])')
+          node.closest?.('aside:has(gu-island[name*="Banner"])') ||
+          node.closest?.('aside:last-child:has(gu-island)')
         );
       }
       return false;
@@ -83,7 +100,8 @@ const observer = new MutationObserver((mutations) => {
       return AD_SELECTORS.some(selector =>
         mutation.target.matches?.(selector) ||
         mutation.target.querySelector?.(selector) ||
-        mutation.target.closest?.('aside:has(gu-island[name*="Banner"])')
+        mutation.target.closest?.('aside:has(gu-island[name*="Banner"])') ||
+        mutation.target.closest?.('aside:last-child:has(gu-island)')
       );
     }
 
