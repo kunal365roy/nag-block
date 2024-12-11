@@ -2,18 +2,14 @@
   // Block web components before they can be registered
   const blockCustomElements = () => {
     if (!window.customElements) return;
-    const noop = () => {};
-    Object.defineProperty(window, 'customElements', {
-      value: {
-        define: noop,
-        get: () => undefined,
-        whenDefined: () => Promise.resolve(),
-        upgrade: noop
-      },
-      configurable: false,
-      enumerable: false,
-      writable: false
-    });
+    const originalDefine = window.customElements.define;
+    window.customElements.define = function(name, constructor, options) {
+      if (name.includes('gu-')) {
+        console.log('Blocked web component:', name);
+        return;
+      }
+      return originalDefine.call(this, name, constructor, options);
+    };
   };
 
   // Execute web component blocking immediately
@@ -23,21 +19,17 @@
   const blockBanners = () => {
     // Remove existing banners
     const selectors = [
-      // Target specific banner elements
       'gu-island[name="StickyBottomBanner"]',
       'input[name="contributions-banner-choice-cards-contribution-frequency"]',
       'input[name="contributions-banner-choice-cards-contribution-amount"]',
       'fieldset:has(input[name*="contributions-banner-choice-cards"])',
-      // Target banner containers
       'aside:has(> gu-island)',
       'aside:has(> div > gu-island)',
       'aside:has(> div:has(> gu-island))',
-      // Target contribution elements
       'fieldset:has(legend)',
       'fieldset:has(input[name*="contribution"])',
       'div:has(> [data-contribution-type])',
       'div:has(> [name*="contribution"])',
-      // Target all contribution-related elements
       '[href*="contribute"]',
       '[href*="support"]',
       '[name*="contribution"]',
@@ -95,14 +87,12 @@
     mutations.forEach((mutation) => {
       mutation.addedNodes.forEach((node) => {
         if (node.nodeType === 1) {
-          // Check for banner elements
-          if (node.tagName && (
-            node.tagName.toLowerCase() === 'aside' ||
-            node.tagName.toLowerCase() === 'gu-island' ||
-            node.querySelector('fieldset') ||
-            node.querySelector('[name*="contribution"]')
-          )) {
-            node.remove();
+          if (node.tagName && node.tagName.toLowerCase() === 'gu-island') {
+            const name = node.getAttribute('name');
+            if (name === 'StickyBottomBanner') {
+              console.log('Removing banner element:', name);
+              node.remove();
+            }
           }
           // Remove any scripts that might initialize the banner
           if (node.tagName === 'SCRIPT') {
@@ -114,9 +104,6 @@
         }
       });
     });
-
-    // Run banner blocking after mutations
-    blockBanners();
   });
 
   // Start observing with aggressive configuration
