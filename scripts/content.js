@@ -1,5 +1,6 @@
 // Prevent banner initialization
 document.documentElement.style.setProperty('--sticky-banner-height', '0px', 'important');
+document.documentElement.style.setProperty('--banner-height', '0px', 'important');
 
 // Block web component initialization
 const scriptBlocker = new MutationObserver((mutations) => {
@@ -51,7 +52,19 @@ const AD_SELECTORS = [
   'aside:last-child:has(gu-island)',
   'aside:last-child > gu-island',
   'aside:last-child > gu-island[name="StickyBottomBanner"]',
-  'aside > gu-island:only-child'
+  'aside > gu-island:only-child',
+  'input[name="contributions-banner-choice-cards-contribution-frequency"]',
+  'input[name="contributions-banner-choice-cards-contribution-amount"]',
+  'fieldset:has(> input[name*="contribution"])',
+  'aside:has(fieldset)',
+  'aside:last-child:has(gu-island)',
+  'div:has(> [data-contribution-type])',
+  'div:has(> [name*="contribution"])',
+  'aside:has(> gu-island)',
+  'aside > *:has(fieldset)',
+  'aside:has(picture)',
+  'aside:has(button[type="button"])',
+  'aside:has(> div:has(fieldset))'
 ];
 
 const style = document.createElement('style');
@@ -71,10 +84,18 @@ style.textContent = `
     margin: -1px !important;
     padding: 0 !important;
     border: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
   }
-  aside:has(gu-island[name="StickyBottomBanner"]),
-  aside:has(gu-island[name*="Banner"]),
-  aside:last-child:has(gu-island) {
+
+  aside,
+  gu-island {
+    contain: strict !important;
+  }
+
+  aside:has(gu-island),
+  aside:has(fieldset),
+  aside:has(picture) {
     display: none !important;
     opacity: 0 !important;
     pointer-events: none !important;
@@ -82,17 +103,16 @@ style.textContent = `
     height: 0 !important;
     min-height: 0 !important;
     max-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    contain: strict !important;
   }
-  gu-island {
-    display: none !important;
-    visibility: hidden !important;
-    height: 0 !important;
-    min-height: 0 !important;
-    max-height: 0 !important;
-  }
+
   body {
     --sticky-banner-height: 0px !important;
     --banner-height: 0px !important;
+    --contributions-banner-height: 0px !important;
   }
 `;
 document.head.appendChild(style);
