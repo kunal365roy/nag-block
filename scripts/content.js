@@ -3,10 +3,17 @@
   const blockBanners = () => {
     // Remove existing banners
     const selectors = [
-      'aside:has(> gu-island[name="StickyBottomBanner"])',
-      'aside:has(> gu-island[name="UsEoy2024Wrapper"])',
+      // Target StickyBottomBanner and its containers
       'gu-island[name="StickyBottomBanner"]',
-      'gu-island[name="UsEoy2024Wrapper"]',
+      'aside:has(> gu-island[name="StickyBottomBanner"])',
+      'aside:has(> div > gu-island[name="StickyBottomBanner"])',
+      'aside:has(> div:has(> gu-island[name="StickyBottomBanner"]))',
+      // Target contribution form elements
+      'input[name*="contributions-banner-choice-cards"]',
+      'fieldset:has(input[name*="contributions-banner-choice-cards"])',
+      'aside:has(fieldset:has(input[name*="contributions-banner-choice-cards"]))',
+      // Target banner containers
+      'aside:has(> gu-island)',
       'aside:has(fieldset)',
       'aside:has(input[name*="contribution"])',
       'aside:has(> div:has(fieldset))',
@@ -18,15 +25,7 @@
       '[name*="contribution"]',
       '[data-contribution-type]',
       'picture + div',
-      'aside:last-child',
-      // Add specific selectors for StickyBottomBanner
-      'aside > gu-island[name="StickyBottomBanner"]',
-      'aside:has(gu-island[name="StickyBottomBanner"])',
-      'aside:has(> div > gu-island[name="StickyBottomBanner"])',
-      // Target contribution form elements
-      'input[name*="contributions-banner-choice-cards"]',
-      'fieldset:has(input[name*="contributions-banner-choice-cards"])',
-      'aside:has(fieldset:has(input[name*="contributions-banner-choice-cards"]))'
+      'aside:last-child'
     ];
 
     // Remove elements matching selectors
