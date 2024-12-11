@@ -1,3 +1,25 @@
+const scriptBlocker = new MutationObserver((mutations) => {
+  for (const mutation of mutations) {
+    for (const node of mutation.addedNodes) {
+      if (node.nodeName === 'SCRIPT') {
+        const script = node;
+        if (script.src && (
+          script.src.includes('guardian.web-components') ||
+          script.src.includes('island.web') ||
+          script.src.includes('island.bundle')
+        )) {
+          script.remove();
+        }
+      }
+    }
+  }
+});
+
+scriptBlocker.observe(document.documentElement, {
+  childList: true,
+  subtree: true
+});
+
 const AD_SELECTORS = [
   '.ad-slot',
   '[data-link-name*="advertisement"]',
@@ -54,6 +76,10 @@ style.textContent = `
     pointer-events: none !important;
     visibility: hidden !important;
   }
+  gu-island {
+    display: none !important;
+    visibility: hidden !important;
+  }
 `;
 document.head.appendChild(style);
 
@@ -65,13 +91,10 @@ function removeAds() {
         const aside = element.closest('aside');
         if (aside) {
           aside.remove();
-          aside.parentNode?.removeChild(aside);
         } else if (element.parentNode.tagName.toLowerCase() === 'gu-island') {
           element.parentNode.remove();
-          element.parentNode.parentNode?.removeChild(element.parentNode);
         } else {
           element.remove();
-          element.parentNode?.removeChild(element);
         }
       }
     });
@@ -80,42 +103,18 @@ function removeAds() {
 
 removeAds();
 
-setInterval(removeAds, 25);
+setInterval(removeAds, 10);
 
 const observer = new MutationObserver((mutations) => {
-  const shouldRemoveAds = mutations.some(mutation => {
-    const hasNewAds = Array.from(mutation.addedNodes).some(node => {
-      if (node.nodeType === Node.ELEMENT_NODE) {
-        return AD_SELECTORS.some(selector =>
-          node.matches?.(selector) ||
-          node.querySelector?.(selector) ||
-          node.closest?.('aside:has(gu-island[name*="Banner"])') ||
-          node.closest?.('aside:last-child:has(gu-island)')
-        );
-      }
-      return false;
-    });
-
-    if (mutation.target.nodeType === Node.ELEMENT_NODE) {
-      return AD_SELECTORS.some(selector =>
-        mutation.target.matches?.(selector) ||
-        mutation.target.querySelector?.(selector) ||
-        mutation.target.closest?.('aside:has(gu-island[name*="Banner"])') ||
-        mutation.target.closest?.('aside:last-child:has(gu-island)')
-      );
+  mutations.forEach(mutation => {
+    if (mutation.addedNodes.length) {
+      removeAds();
     }
-
-    return hasNewAds;
   });
-
-  if (shouldRemoveAds) {
-    removeAds();
-  }
 });
 
 observer.observe(document.body, {
   childList: true,
   subtree: true,
-  attributes: true,
-  characterData: true
+  attributes: true
 });
