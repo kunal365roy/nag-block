@@ -29,21 +29,20 @@
     enumerable: false
   });
 
-  // Define comprehensive selectors targeting both banner variants
+  // Define comprehensive selectors targeting both banner variants and their containers
   const AD_SELECTORS = [
-    // Current banner structure
+    // Primary banner selectors
     'aside:has(> gu-island[name="StickyBottomBanner"])',
     'gu-island[name="StickyBottomBanner"]',
-    'aside:has(> gu-island)',
-    'aside:last-child:has(gu-island)',
-    'aside > gu-island:only-child',
+    'aside:last-child:has(> gu-island[name="StickyBottomBanner"])',
+    'aside:has(> gu-island[name="StickyBottomBanner"]) > *',
 
-    // End of year banner
+    // Alternative banner selectors
     'gu-island[name="UsEoy2024Wrapper"]',
     'aside:has(> gu-island[name="UsEoy2024Wrapper"])',
     'div:has(> gu-island[name="UsEoy2024Wrapper"])',
 
-    // Contribution elements
+    // Contribution form elements
     'input[name="contributions-banner-choice-cards-contribution-frequency"]',
     'input[name="contributions-banner-choice-cards-contribution-amount"]',
     '[name="thrasher-choice-cards-contribution-frequency"]',
@@ -56,10 +55,12 @@
     'aside:has(button[type="button"])',
     'aside:has(> div:has(fieldset))',
     'div:has(> [data-contribution-type])',
-    'div:has(> [name*="contribution"])'
+    'div:has(> [name*="contribution"])',
+    'aside:last-child:has(gu-island)',
+    'aside > gu-island:only-child'
   ];
 
-  // Inject aggressive CSS rules
+  // Inject aggressive CSS rules with !important
   const style = document.createElement('style');
   style.textContent = `
     ${AD_SELECTORS.join(',\n    ')} {
@@ -74,6 +75,8 @@
       clip: rect(0, 0, 0, 0) !important;
       clip-path: inset(50%) !important;
       transform: translateY(-100%) !important;
+      max-height: 0 !important;
+      overflow: hidden !important;
     }
   `;
   document.documentElement.appendChild(style);
