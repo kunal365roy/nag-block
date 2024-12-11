@@ -7,12 +7,13 @@ const AD_SELECTORS = [
   '.site-message--contributions',
   'gu-island[name="TopBar"]',
   'gu-island[name="ExpandableMarketingCardWrapper"]',
-  'gu-island[name="UsEoy2024Wrapper"]',  // Add fundraising banner wrapper
+  'gu-island[name="StickyBottomBanner"]',  // Add sticky banner wrapper
+  'gu-island[name="UsEoy2024Wrapper"]',    // Add fundraising banner wrapper
   '.ad-slot-container',
   '.commercial-unit',
   '.contributions__epic-wrapper',
-  '[name="thrasher-choice-cards-contribution-frequency"]',  // Add contribution form elements
-  '[name="thrasher-choice-cards-contribution-amount"]'      // Add contribution amount elements
+  '[name="contributions-banner-choice-cards-contribution-frequency"]',  // Add contribution form elements
+  '[name="contributions-banner-choice-cards-contribution-amount"]'      // Add contribution amount elements
 ];
 
 function removeAds() {
