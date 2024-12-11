@@ -29,24 +29,34 @@
     enumerable: false
   });
 
-  // Define comprehensive selectors
+  // Define comprehensive selectors targeting both banner variants
   const AD_SELECTORS = [
-    '.ad-slot',
-    '[data-link-name*="advertisement"]',
-    '.js-ad-slot',
-    '.contributions__epic',
-    '.contributions-banner',
-    'gu-island[name="TopBar"]',
-    'gu-island[name="ExpandableMarketingCardWrapper"]',
-    'gu-island[name="UsEoy2024Wrapper"]',  // New selector for end-of-year banner
+    // Current banner structure
+    'aside:has(> gu-island[name="StickyBottomBanner"])',
     'gu-island[name="StickyBottomBanner"]',
-    '.ad-slot-container',
-    '.commercial-unit',
-    '.contributions__epic-wrapper',
-    '[name="thrasher-choice-cards-contribution-frequency"]',  // New selector for frequency
-    '[name="thrasher-choice-cards-contribution-amount"]',     // New selector for amount
-    '[name="contributions-banner-choice-cards-contribution-frequency"]',
-    '[name="contributions-banner-choice-cards-contribution-amount"]'
+    'aside:has(> gu-island)',
+    'aside:last-child:has(gu-island)',
+    'aside > gu-island:only-child',
+
+    // End of year banner
+    'gu-island[name="UsEoy2024Wrapper"]',
+    'aside:has(> gu-island[name="UsEoy2024Wrapper"])',
+    'div:has(> gu-island[name="UsEoy2024Wrapper"])',
+
+    // Contribution elements
+    'input[name="contributions-banner-choice-cards-contribution-frequency"]',
+    'input[name="contributions-banner-choice-cards-contribution-amount"]',
+    '[name="thrasher-choice-cards-contribution-frequency"]',
+    '[name="thrasher-choice-cards-contribution-amount"]',
+    'fieldset:has(> input[name*="contribution"])',
+
+    // Generic banner elements
+    'aside:has(fieldset)',
+    'aside:has(picture)',
+    'aside:has(button[type="button"])',
+    'aside:has(> div:has(fieldset))',
+    'div:has(> [data-contribution-type])',
+    'div:has(> [name*="contribution"])'
   ];
 
   // Inject aggressive CSS rules
@@ -60,6 +70,10 @@
       position: fixed !important;
       top: -9999px !important;
       left: -9999px !important;
+      z-index: -9999 !important;
+      clip: rect(0, 0, 0, 0) !important;
+      clip-path: inset(50%) !important;
+      transform: translateY(-100%) !important;
     }
   `;
   document.documentElement.appendChild(style);
