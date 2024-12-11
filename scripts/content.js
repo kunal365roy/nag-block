@@ -1,12 +1,42 @@
 (() => {
-  // Block custom element registration and initialization
-  const originalDefine = window.customElements.define;
-  window.customElements.define = function(name, constructor, options) {
-    if (name.toLowerCase().includes('gu-') || name.toLowerCase().includes('island')) {
-      console.debug('Blocked registration of:', name);
+  // Override prototype methods to prevent banner initialization
+  const elementProto = Element.prototype;
+  const originalAppendChild = elementProto.appendChild;
+  const originalInsertBefore = elementProto.insertBefore;
+  const originalSetAttribute = elementProto.setAttribute;
+
+  // Block appendChild for banner elements
+  elementProto.appendChild = function(node) {
+    if (node && (
+      (node.tagName && node.tagName.toLowerCase() === 'gu-island') ||
+      (node.getAttribute && node.getAttribute('name') === 'StickyBottomBanner') ||
+      (node.parentElement && node.parentElement.tagName && node.parentElement.tagName.toLowerCase() === 'aside')
+    )) {
+      console.debug('Blocked appendChild of banner element');
+      return node;
+    }
+    return originalAppendChild.call(this, node);
+  };
+
+  // Block insertBefore for banner elements
+  elementProto.insertBefore = function(node, ref) {
+    if (node && (
+      (node.tagName && node.tagName.toLowerCase() === 'gu-island') ||
+      (node.getAttribute && node.getAttribute('name') === 'StickyBottomBanner')
+    )) {
+      console.debug('Blocked insertBefore of banner element');
+      return node;
+    }
+    return originalInsertBefore.call(this, node, ref);
+  };
+
+  // Block setAttribute for banner-related attributes
+  elementProto.setAttribute = function(name, value) {
+    if (name === 'name' && (value === 'StickyBottomBanner' || value.includes('Banner'))) {
+      console.debug('Blocked setAttribute for banner');
       return;
     }
-    return originalDefine.call(this, name, constructor, options);
+    return originalSetAttribute.call(this, name, value);
   };
 
   // Aggressive banner removal
