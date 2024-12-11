@@ -3,12 +3,26 @@ aside:has(> gu-island[name="StickyBottomBanner"]),
 aside:has(> gu-island[name="UsEoy2024Wrapper"]),
 gu-island[name="StickyBottomBanner"],
 gu-island[name="UsEoy2024Wrapper"],
-aside:has(fieldset:has(input[name*="contribution"])),
-aside:last-child:has(gu-island),
+aside:has(fieldset),
+aside:has(input[name*="contribution"]),
 aside:has(> div:has(fieldset)),
-aside:has(picture:has(+ div:has(fieldset))),
+aside:has(picture),
 div:has(> [data-contribution-type]),
-div:has(> [name*="contribution"]) {
+div:has(> [name*="contribution"]),
+div:has(fieldset),
+fieldset,
+[name*="contribution"],
+[data-contribution-type],
+picture + div,
+aside:last-child,
+/* Specific selectors for StickyBottomBanner */
+aside > gu-island[name="StickyBottomBanner"],
+aside:has(gu-island[name="StickyBottomBanner"]),
+aside:has(> div > gu-island[name="StickyBottomBanner"]),
+/* Target contribution form elements */
+input[name*="contributions-banner-choice-cards"],
+fieldset:has(input[name*="contributions-banner-choice-cards"]),
+aside:has(fieldset:has(input[name*="contributions-banner-choice-cards"])) {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
@@ -22,6 +36,9 @@ div:has(> [name*="contribution"]) {
   border: 0 !important;
   min-height: 0 !important;
   max-height: 0 !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  contain: strict !important;
 }
 
 /* Override Guardian's CSS variables */
@@ -29,19 +46,20 @@ div:has(> [name*="contribution"]) {
   --sticky-banner-height: 0 !important;
   --banner-height: 0 !important;
   --contributions-banner-height: 0 !important;
-}
-
-/* Hide contribution-related elements */
-input[name*="contribution-frequency"],
-input[name*="contribution-amount"],
-[name*="contribution"],
-fieldset:has(input[name*="contribution"]) {
-  display: none !important;
+  --banner-bottom-height: 0 !important;
+  --banner-top-height: 0 !important;
 }
 
 /* Ensure parent containers don't create space */
-aside {
-  contain: strict;
+body > aside,
+#bottom-banner,
+#top-banner,
+.js-bottom-banner,
+.js-top-banner {
+  display: none !important;
+  height: 0 !important;
   min-height: 0 !important;
-  max-height: none !important;
+  max-height: 0 !important;
+  overflow: hidden !important;
+  contain: strict !important;
 }
