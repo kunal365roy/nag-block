@@ -1,25 +1,59 @@
 (() => {
-  // 1. Inject CSS rules immediately
+  // Block Shadow DOM and custom element initialization
+  const originalAttachShadow = Element.prototype.attachShadow;
+  Element.prototype.attachShadow = function(init) {
+    if (this.tagName && this.tagName.toLowerCase() === 'gu-island') {
+      console.debug('Blocked shadow DOM attachment for gu-island');
+      return this;
+    }
+    return originalAttachShadow.call(this, init);
+  };
+
+  // Override customElements.define before it's even created
+  Object.defineProperty(window, 'customElements', {
+    get: function() {
+      return {
+        define: function(name, constructor) {
+          console.debug('Blocked custom element registration:', name);
+          return undefined;
+        },
+        get: function(name) {
+          return undefined;
+        },
+        whenDefined: function(name) {
+          return Promise.resolve(undefined);
+        }
+      };
+    },
+    configurable: false,
+    enumerable: false
+  });
+
+  // Define comprehensive selectors
+  const AD_SELECTORS = [
+    '.ad-slot',
+    '[data-link-name*="advertisement"]',
+    '.js-ad-slot',
+    '.contributions__epic',
+    '.contributions-banner',
+    'gu-island[name="TopBar"]',
+    'gu-island[name="ExpandableMarketingCardWrapper"]',
+    'gu-island[name="UsEoy2024Wrapper"]',  // New selector for end-of-year banner
+    'gu-island[name="StickyBottomBanner"]',
+    '.ad-slot-container',
+    '.commercial-unit',
+    '.contributions__epic-wrapper',
+    '[name="thrasher-choice-cards-contribution-frequency"]',  // New selector for frequency
+    '[name="thrasher-choice-cards-contribution-amount"]',     // New selector for amount
+    '[name="contributions-banner-choice-cards-contribution-frequency"]',
+    '[name="contributions-banner-choice-cards-contribution-amount"]'
+  ];
+
+  // Inject aggressive CSS rules
   const style = document.createElement('style');
   style.textContent = `
-    aside:has(> gu-island[name="StickyBottomBanner"]),
-    gu-island[name="StickyBottomBanner"],
-    aside:has(> [data-contribution-type]),
-    [data-contribution-type],
-    .contributions-banner-wrapper,
-    .contributions__epic,
-    .contributions__epic-wrapper,
-    aside:has(> gu-island),
-    gu-island[name*="Banner"],
-    gu-island[name*="Wrapper"],
-    [data-component*="contributions"],
-    [data-component*="banner"],
-    [data-testid*="banner"],
-    [data-testid*="contributions"] {
+    ${AD_SELECTORS.join(',\n    ')} {
       display: none !important;
-      height: 0 !important;
-      max-height: 0 !important;
-      overflow: hidden !important;
       visibility: hidden !important;
       opacity: 0 !important;
       pointer-events: none !important;
@@ -29,63 +63,6 @@
     }
   `;
   document.documentElement.appendChild(style);
-
-  // 2. Override prototype methods
-  const elementProto = Element.prototype;
-  const originalAppendChild = elementProto.appendChild;
-  const originalInsertBefore = elementProto.insertBefore;
-  const originalSetAttribute = elementProto.setAttribute;
-
-  elementProto.appendChild = function(node) {
-    if (node && (
-      (node.tagName && node.tagName.toLowerCase() === 'gu-island') ||
-      (node.getAttribute && node.getAttribute('name') === 'StickyBottomBanner') ||
-      (node.parentElement && node.parentElement.tagName && node.parentElement.tagName.toLowerCase() === 'aside')
-    )) {
-      console.debug('Blocked appendChild of banner element');
-      return node;
-    }
-    return originalAppendChild.call(this, node);
-  };
-
-  elementProto.insertBefore = function(node, ref) {
-    if (node && (
-      (node.tagName && node.tagName.toLowerCase() === 'gu-island') ||
-      (node.getAttribute && node.getAttribute('name') === 'StickyBottomBanner')
-    )) {
-      console.debug('Blocked insertBefore of banner element');
-      return node;
-    }
-    return originalInsertBefore.call(this, node, ref);
-  };
-
-  elementProto.setAttribute = function(name, value) {
-    if (name === 'name' && (value === 'StickyBottomBanner' || value.includes('Banner'))) {
-      console.debug('Blocked setAttribute for banner');
-      return;
-    }
-    return originalSetAttribute.call(this, name, value);
-  };
-
-  // 3. Block custom element registration
-  const originalDefine = window.customElements.define;
-  window.customElements.define = function(name, constructor, options) {
-    if (name.toLowerCase().includes('gu-') || name.toLowerCase().includes('island')) {
-      console.debug('Blocked registration of:', name);
-      return;
-    }
-    return originalDefine.call(this, name, constructor, options);
-  };
-
-  // 4. Override createElement
-  const originalCreateElement = document.createElement.bind(document);
-  document.createElement = function(tagName, options) {
-    if (tagName.toLowerCase() === 'gu-island') {
-      console.debug('Blocked creation of gu-island');
-      return originalCreateElement('div');
-    }
-    return originalCreateElement(tagName, options);
-  };
 
   // Aggressive banner removal
   const removeBanners = () => {
@@ -134,48 +111,6 @@ scriptBlocker.observe(document.documentElement, {
   childList: true,
   subtree: true
 });
-
-const AD_SELECTORS = [
-  '.ad-slot',
-  '[data-link-name*="advertisement"]',
-  '.js-ad-slot',
-  '.contributions__epic',
-  '.contributions-banner',
-  '.site-message--contributions',
-  'gu-island[name="TopBar"]',
-  'gu-island[name="ExpandableMarketingCardWrapper"]',
-  'gu-island[name="StickyBottomBanner"]',
-  'gu-island[name="UsEoy2024Wrapper"]',
-  '.ad-slot-container',
-  '.commercial-unit',
-  '.contributions__epic-wrapper',
-  '[name="contributions-banner-choice-cards-contribution-frequency"]',
-  '[name="contributions-banner-choice-cards-contribution-amount"]',
-  'aside > gu-island[name="StickyBottomBanner"]',
-  'aside > *',
-  'gu-island[name*="Banner"]',
-  'div[data-contribution-type]',
-  'aside:has(> gu-island[name="StickyBottomBanner"])',
-  'aside:has(> gu-island[name*="Banner"])',
-  'div:has(> [name*="contribution"])',
-  'div:has(> [data-contribution-type])',
-  'aside:last-child:has(gu-island)',
-  'aside:last-child > gu-island',
-  'aside:last-child > gu-island[name="StickyBottomBanner"]',
-  'aside > gu-island:only-child',
-  'input[name="contributions-banner-choice-cards-contribution-frequency"]',
-  'input[name="contributions-banner-choice-cards-contribution-amount"]',
-  'fieldset:has(> input[name*="contribution"])',
-  'aside:has(fieldset)',
-  'aside:last-child:has(gu-island)',
-  'div:has(> [data-contribution-type])',
-  'div:has(> [name*="contribution"])',
-  'aside:has(> gu-island)',
-  'aside > *:has(fieldset)',
-  'aside:has(picture)',
-  'aside:has(button[type="button"])',
-  'aside:has(> div:has(fieldset))'
-];
 
 const style = document.createElement('style');
 style.textContent = `
