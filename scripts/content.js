@@ -1,4 +1,24 @@
 (() => {
+  // Block web components before they can be registered
+  const blockCustomElements = () => {
+    if (!window.customElements) return;
+    const noop = () => {};
+    Object.defineProperty(window, 'customElements', {
+      value: {
+        define: noop,
+        get: () => undefined,
+        whenDefined: () => Promise.resolve(),
+        upgrade: noop
+      },
+      configurable: false,
+      enumerable: false,
+      writable: false
+    });
+  };
+
+  // Execute web component blocking immediately
+  blockCustomElements();
+
   // Block banner initialization and web components
   const blockBanners = () => {
     // Remove existing banners
@@ -49,27 +69,6 @@
   blockBanners();
   document.addEventListener('DOMContentLoaded', blockBanners);
   window.addEventListener('load', blockBanners);
-
-  // Block web components
-  const blockCustomElements = () => {
-    if (!window.customElements) return;
-    const noop = () => {};
-    Object.defineProperty(window, 'customElements', {
-      value: {
-        define: noop,
-        get: () => undefined,
-        whenDefined: () => Promise.resolve(),
-        upgrade: noop
-      },
-      configurable: false,
-      enumerable: false,
-      writable: false
-    });
-  };
-
-  // Execute web component blocking
-  blockCustomElements();
-  document.addEventListener('DOMContentLoaded', blockCustomElements);
 
   // Prevent Shadow DOM attachment
   const originalAttachShadow = Element.prototype.attachShadow;
