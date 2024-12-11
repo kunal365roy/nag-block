@@ -3,15 +3,22 @@
   const blockBanners = () => {
     // Remove existing banners
     const selectors = [
-      // Target StickyBottomBanner and its containers
-      'gu-island[name="StickyBottomBanner"]',
-      'aside:has(> gu-island[name="StickyBottomBanner"])',
-      'aside:has(> div > gu-island[name="StickyBottomBanner"])',
-      'aside:has(> div:has(> gu-island[name="StickyBottomBanner"]))',
-      // Target contribution form elements
+      // Target banner containers and their contents
+      'aside:has(> header > picture)',
+      'aside:has(> fieldset)',
+      'aside:has(> a[href*="contribute"])',
+      'aside:has(> button)',
+      'aside:has(> picture)',
+      // Target specific banner elements
+      'header:has(> picture)',
+      'fieldset:has(> legend:contains("Contribution"))',
       'input[name*="contributions-banner-choice-cards"]',
-      'fieldset:has(input[name*="contributions-banner-choice-cards"])',
-      'aside:has(fieldset:has(input[name*="contributions-banner-choice-cards"]))',
+      'div:has(> [data-contribution-type])',
+      // Target all contribution-related elements
+      '[href*="contribute"]',
+      '[href*="support"]',
+      '[name*="contribution"]',
+      '[data-contribution-type]',
       // Target banner containers
       'aside:has(> gu-island)',
       'aside:has(fieldset)',
@@ -22,10 +29,7 @@
       'div:has(> [name*="contribution"])',
       'div:has(fieldset)',
       'fieldset',
-      '[name*="contribution"]',
-      '[data-contribution-type]',
-      'picture + div',
-      'aside:last-child'
+      'picture + div'
     ];
 
     // Remove elements matching selectors
@@ -92,7 +96,8 @@
             node.tagName.toLowerCase() === 'aside' ||
             node.tagName.toLowerCase() === 'gu-island' ||
             node.querySelector('fieldset') ||
-            node.querySelector('[name*="contribution"]')
+            node.querySelector('[name*="contribution"]') ||
+            node.querySelector('picture')
           )) {
             node.remove();
           }
