@@ -1,11 +1,41 @@
 (() => {
-  // Override prototype methods to prevent banner initialization
+  // 1. Inject CSS rules immediately
+  const style = document.createElement('style');
+  style.textContent = `
+    aside:has(> gu-island[name="StickyBottomBanner"]),
+    gu-island[name="StickyBottomBanner"],
+    aside:has(> [data-contribution-type]),
+    [data-contribution-type],
+    .contributions-banner-wrapper,
+    .contributions__epic,
+    .contributions__epic-wrapper,
+    aside:has(> gu-island),
+    gu-island[name*="Banner"],
+    gu-island[name*="Wrapper"],
+    [data-component*="contributions"],
+    [data-component*="banner"],
+    [data-testid*="banner"],
+    [data-testid*="contributions"] {
+      display: none !important;
+      height: 0 !important;
+      max-height: 0 !important;
+      overflow: hidden !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+      position: fixed !important;
+      top: -9999px !important;
+      left: -9999px !important;
+    }
+  `;
+  document.documentElement.appendChild(style);
+
+  // 2. Override prototype methods
   const elementProto = Element.prototype;
   const originalAppendChild = elementProto.appendChild;
   const originalInsertBefore = elementProto.insertBefore;
   const originalSetAttribute = elementProto.setAttribute;
 
-  // Block appendChild for banner elements
   elementProto.appendChild = function(node) {
     if (node && (
       (node.tagName && node.tagName.toLowerCase() === 'gu-island') ||
@@ -18,7 +48,6 @@
     return originalAppendChild.call(this, node);
   };
 
-  // Block insertBefore for banner elements
   elementProto.insertBefore = function(node, ref) {
     if (node && (
       (node.tagName && node.tagName.toLowerCase() === 'gu-island') ||
@@ -30,13 +59,32 @@
     return originalInsertBefore.call(this, node, ref);
   };
 
-  // Block setAttribute for banner-related attributes
   elementProto.setAttribute = function(name, value) {
     if (name === 'name' && (value === 'StickyBottomBanner' || value.includes('Banner'))) {
       console.debug('Blocked setAttribute for banner');
       return;
     }
     return originalSetAttribute.call(this, name, value);
+  };
+
+  // 3. Block custom element registration
+  const originalDefine = window.customElements.define;
+  window.customElements.define = function(name, constructor, options) {
+    if (name.toLowerCase().includes('gu-') || name.toLowerCase().includes('island')) {
+      console.debug('Blocked registration of:', name);
+      return;
+    }
+    return originalDefine.call(this, name, constructor, options);
+  };
+
+  // 4. Override createElement
+  const originalCreateElement = document.createElement.bind(document);
+  document.createElement = function(tagName, options) {
+    if (tagName.toLowerCase() === 'gu-island') {
+      console.debug('Blocked creation of gu-island');
+      return originalCreateElement('div');
+    }
+    return originalCreateElement(tagName, options);
   };
 
   // Aggressive banner removal
