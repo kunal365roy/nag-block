@@ -12,7 +12,17 @@
     "default_popup": "popup.html"
   },
   "host_permissions": ["*://*.theguardian.com/*"],
-  "permissions": ["scripting"],
+  "permissions": [
+    "scripting",
+    "declarativeNetRequest"
+  ],
+  "declarative_net_request": {
+    "rule_resources": [{
+      "id": "guardian_rules",
+      "enabled": true,
+      "path": "rules.json"
+    }]
+  },
   "content_scripts": [{
     "matches": ["*://*.theguardian.com/*"],
     "js": ["scripts/content.js"],

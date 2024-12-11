@@ -1,3 +1,7 @@
+// Prevent banner initialization
+document.documentElement.style.setProperty('--sticky-banner-height', '0px', 'important');
+
+// Block web component initialization
 const scriptBlocker = new MutationObserver((mutations) => {
   for (const mutation of mutations) {
     for (const node of mutation.addedNodes) {
@@ -75,10 +79,20 @@ style.textContent = `
     opacity: 0 !important;
     pointer-events: none !important;
     visibility: hidden !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
   }
   gu-island {
     display: none !important;
     visibility: hidden !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
+  }
+  body {
+    --sticky-banner-height: 0px !important;
+    --banner-height: 0px !important;
   }
 `;
 document.head.appendChild(style);
