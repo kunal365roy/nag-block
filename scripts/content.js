@@ -17,12 +17,26 @@ const AD_SELECTORS = [
   'aside > gu-island[name="StickyBottomBanner"]',
   'aside > *',
   'gu-island[name*="Banner"]',
-  'div[data-contribution-type]'
+  'div[data-contribution-type]',
+  'aside:has(> gu-island[name="StickyBottomBanner"])',
+  'aside:has(> gu-island[name*="Banner"])',
+  'div:has(> [name*="contribution"])',
+  'div:has(> [data-contribution-type])'
 ];
 
 const style = document.createElement('style');
 style.textContent = `
   ${AD_SELECTORS.join(',\n  ')} {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+    position: fixed !important;
+    top: -9999px !important;
+    left: -9999px !important;
+  }
+  aside:has(gu-island[name="StickyBottomBanner"]),
+  aside:has(gu-island[name*="Banner"]) {
     display: none !important;
     opacity: 0 !important;
     pointer-events: none !important;
@@ -35,8 +49,10 @@ function removeAds() {
     const elements = document.querySelectorAll(selector);
     elements.forEach(element => {
       if (element && element.parentNode) {
-        if (element.parentNode.tagName.toLowerCase() === 'gu-island' ||
-            element.parentNode.tagName.toLowerCase() === 'aside') {
+        const aside = element.closest('aside');
+        if (aside) {
+          aside.remove();
+        } else if (element.parentNode.tagName.toLowerCase() === 'gu-island') {
           element.parentNode.remove();
         } else {
           element.remove();
@@ -48,14 +64,16 @@ function removeAds() {
 
 removeAds();
 
-setInterval(removeAds, 100);
+setInterval(removeAds, 50);
 
 const observer = new MutationObserver((mutations) => {
   const shouldRemoveAds = mutations.some(mutation => {
     const hasNewAds = Array.from(mutation.addedNodes).some(node => {
       if (node.nodeType === Node.ELEMENT_NODE) {
         return AD_SELECTORS.some(selector =>
-          node.matches?.(selector) || node.querySelector?.(selector)
+          node.matches?.(selector) ||
+          node.querySelector?.(selector) ||
+          node.closest?.('aside:has(gu-island[name*="Banner"])')
         );
       }
       return false;
@@ -63,7 +81,9 @@ const observer = new MutationObserver((mutations) => {
 
     if (mutation.target.nodeType === Node.ELEMENT_NODE) {
       return AD_SELECTORS.some(selector =>
-        mutation.target.matches?.(selector) || mutation.target.querySelector?.(selector)
+        mutation.target.matches?.(selector) ||
+        mutation.target.querySelector?.(selector) ||
+        mutation.target.closest?.('aside:has(gu-island[name*="Banner"])')
       );
     }
 
