@@ -1,5 +1,5 @@
 (() => {
-  // Block custom element registration
+  // Block custom element registration and initialization
   const originalDefine = window.customElements.define;
   window.customElements.define = function(name, constructor, options) {
     if (name.toLowerCase().includes('gu-') || name.toLowerCase().includes('island')) {
@@ -8,6 +8,26 @@
     }
     return originalDefine.call(this, name, constructor, options);
   };
+
+  // Aggressive banner removal
+  const removeBanners = () => {
+    const elements = document.querySelectorAll('aside, gu-island');
+    elements.forEach(el => {
+      if (el.tagName.toLowerCase() === 'gu-island' ||
+          el.querySelector('gu-island') ||
+          el.querySelector('fieldset') ||
+          el.querySelector('picture')) {
+        el.remove();
+      }
+    });
+  };
+
+  // Run immediately and set up continuous monitoring
+  removeBanners();
+  new MutationObserver(removeBanners).observe(document.documentElement, {
+    childList: true,
+    subtree: true
+  });
 
   // Set banner heights to 0
   document.documentElement.style.setProperty('--sticky-banner-height', '0px', 'important');
