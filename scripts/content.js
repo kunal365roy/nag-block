@@ -3,32 +3,31 @@
   const blockBanners = () => {
     // Remove existing banners
     const selectors = [
-      // Target banner containers and their contents
-      'aside:has(> header > picture)',
-      'aside:has(> fieldset)',
-      'aside:has(> a[href*="contribute"])',
-      'aside:has(> button)',
-      'aside:has(> picture)',
       // Target specific banner elements
-      'header:has(> picture)',
-      'fieldset:has(> legend:contains("Contribution"))',
-      'input[name*="contributions-banner-choice-cards"]',
+      'gu-island[name="StickyBottomBanner"]',
+      'input[name="contributions-banner-choice-cards-contribution-frequency"]',
+      'input[name="contributions-banner-choice-cards-contribution-amount"]',
+      'fieldset:has(input[name*="contributions-banner-choice-cards"])',
+      // Target banner containers
+      'aside:has(> gu-island)',
+      'aside:has(> div > gu-island)',
+      'aside:has(> div:has(> gu-island))',
+      // Target contribution elements
+      'fieldset:has(legend)',
+      'fieldset:has(input[name*="contribution"])',
       'div:has(> [data-contribution-type])',
+      'div:has(> [name*="contribution"])',
       // Target all contribution-related elements
       '[href*="contribute"]',
       '[href*="support"]',
       '[name*="contribution"]',
       '[data-contribution-type]',
-      // Target banner containers
-      'aside:has(> gu-island)',
-      'aside:has(fieldset)',
-      'aside:has(input[name*="contribution"])',
-      'aside:has(> div:has(fieldset))',
-      'aside:has(picture)',
-      'div:has(> [data-contribution-type])',
-      'div:has(> [name*="contribution"])',
-      'div:has(fieldset)',
-      'fieldset',
+      // Target banner containers and their contents
+      'aside:has(> header > picture)',
+      'aside:has(> fieldset)',
+      'aside:has(> button)',
+      'aside:has(> picture)',
+      'header:has(> picture)',
       'picture + div'
     ];
 

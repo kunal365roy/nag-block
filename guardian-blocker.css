@@ -1,24 +1,25 @@
 /* Hide banner elements */
 gu-island[name="StickyBottomBanner"],
-aside:has(> gu-island[name="StickyBottomBanner"]),
-aside:has(> div > gu-island[name="StickyBottomBanner"]),
-aside:has(> div:has(> gu-island[name="StickyBottomBanner"])),
-input[name*="contributions-banner-choice-cards"],
+input[name="contributions-banner-choice-cards-contribution-frequency"],
+input[name="contributions-banner-choice-cards-contribution-amount"],
 fieldset:has(input[name*="contributions-banner-choice-cards"]),
-aside:has(fieldset:has(input[name*="contributions-banner-choice-cards"])),
 aside:has(> gu-island),
-aside:has(fieldset),
-aside:has(input[name*="contribution"]),
-aside:has(> div:has(fieldset)),
-aside:has(picture),
+aside:has(> div > gu-island),
+aside:has(> div:has(> gu-island)),
+fieldset:has(legend),
+fieldset:has(input[name*="contribution"]),
 div:has(> [data-contribution-type]),
 div:has(> [name*="contribution"]),
-div:has(fieldset),
-fieldset,
+[href*="contribute"],
+[href*="support"],
 [name*="contribution"],
 [data-contribution-type],
-picture + div,
-aside:last-child {
+aside:has(> header > picture),
+aside:has(> fieldset),
+aside:has(> button),
+aside:has(> picture),
+header:has(> picture),
+picture + div {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
