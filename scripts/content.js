@@ -21,14 +21,7 @@
       '[href*="contribute"]',
       '[href*="support"]',
       '[name*="contribution"]',
-      '[data-contribution-type]',
-      // Target banner containers and their contents
-      'aside:has(> header > picture)',
-      'aside:has(> fieldset)',
-      'aside:has(> button)',
-      'aside:has(> picture)',
-      'header:has(> picture)',
-      'picture + div'
+      '[data-contribution-type]'
     ];
 
     // Remove elements matching selectors
@@ -95,8 +88,7 @@
             node.tagName.toLowerCase() === 'aside' ||
             node.tagName.toLowerCase() === 'gu-island' ||
             node.querySelector('fieldset') ||
-            node.querySelector('[name*="contribution"]') ||
-            node.querySelector('picture')
+            node.querySelector('[name*="contribution"]')
           )) {
             node.remove();
           }
