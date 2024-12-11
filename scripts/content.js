@@ -30,6 +30,19 @@
         element.remove();
       });
     });
+
+    // Override CSS variables to prevent banner space
+    const style = document.createElement('style');
+    style.textContent = `
+      :root {
+        --sticky-banner-height: 0 !important;
+        --banner-height: 0 !important;
+        --contributions-banner-height: 0 !important;
+        --banner-bottom-height: 0 !important;
+        --banner-top-height: 0 !important;
+      }
+    `;
+    document.head.appendChild(style);
   };
 
   // Execute banner blocking immediately and on DOM changes

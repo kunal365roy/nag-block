@@ -13,13 +13,7 @@ div:has(> [name*="contribution"]),
 [href*="contribute"],
 [href*="support"],
 [name*="contribution"],
-[data-contribution-type],
-aside:has(> header > picture),
-aside:has(> fieldset),
-aside:has(> button),
-aside:has(> picture),
-header:has(> picture),
-picture + div {
+[data-contribution-type] {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
