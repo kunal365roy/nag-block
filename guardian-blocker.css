@@ -1,0 +1,47 @@
+/* Hide banner elements */
+aside:has(> gu-island[name="StickyBottomBanner"]),
+aside:has(> gu-island[name="UsEoy2024Wrapper"]),
+gu-island[name="StickyBottomBanner"],
+gu-island[name="UsEoy2024Wrapper"],
+aside:has(fieldset:has(input[name*="contribution"])),
+aside:last-child:has(gu-island),
+aside:has(> div:has(fieldset)),
+aside:has(picture:has(+ div:has(fieldset))),
+div:has(> [data-contribution-type]),
+div:has(> [name*="contribution"]) {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  position: absolute !important;
+  pointer-events: none !important;
+  clip: rect(0, 0, 0, 0) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+}
+
+/* Override Guardian's CSS variables */
+:root {
+  --sticky-banner-height: 0 !important;
+  --banner-height: 0 !important;
+  --contributions-banner-height: 0 !important;
+}
+
+/* Hide contribution-related elements */
+input[name*="contribution-frequency"],
+input[name*="contribution-amount"],
+[name*="contribution"],
+fieldset:has(input[name*="contribution"]) {
+  display: none !important;
+}
+
+/* Ensure parent containers don't create space */
+aside {
+  contain: strict;
+  min-height: 0 !important;
+  max-height: none !important;
+}
